@@ -23,6 +23,7 @@ async function run() {
     try {
     
     const itemsCollection = client.db('cardocter').collection('services')
+    const bookingCollection = client.db('cardocter').collection('bookings')
 
     app.get('/services',async(req,res)=>{
         const cursor = itemsCollection.find()
@@ -39,6 +40,12 @@ async function run() {
        const result = await itemsCollection.findOne(query, options);
        res.send(result)
    })
+
+   app.post('/bookings',async(req,res)=>{
+        const booking = req.body;
+
+    })
+
     // 
     app.post('/services',async(req,res)=>{
          const items = req.body 
