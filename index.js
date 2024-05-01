@@ -5,6 +5,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5007
 const cors = require('cors');
 const { title } = require('process');
+const { read } = require('fs');
 app.use(cors())
 app.use(express.json())
 
@@ -35,7 +36,7 @@ async function run() {
        const query = {_id: new ObjectId(id)}
 
        const options = {
-          projection : {title : 1, price: 1, services_id: 1},
+          projection : {title : 1, price: 1, services_id: 1, img: 1},
        };
        const result = await itemsCollection.findOne(query, options);
        res.send(result)
@@ -47,9 +48,14 @@ async function run() {
         const result = await bookingCollection.insertOne(booking)
 
     })
-
+// http://localhost:5007/bookings?emails=nafisahamed14@gmail.com
     app.get('/bookings',async(req,res)=>{
-       console.log(req.query)
+       console.log(req.query);
+       console.log(req.query.email)
+      
+       if(req.query?.email){
+         query = {email: req.query.email}
+       }
        const result = await bookingCollection.find().toArray()
        res.send(result)
     })
