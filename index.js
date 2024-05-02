@@ -80,6 +80,8 @@ async function run() {
           status:updatebooking.status
         }
       }
+      const result = await bookingCollection.updateOne(filter, updateDoc)
+      res.send(result)
     })
 
     // 
