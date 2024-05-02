@@ -69,6 +69,19 @@ async function run() {
       console.log('id is delete');
     })
 
+    app.patch('/bookings/:id',async(req,res)=>{
+      const updatebooking = req.body
+      const id = req.params.id
+      const filter = {_id:new ObjectId(id)}
+      const options = {upsert: true}
+      console.log(updatebooking)
+      const updateDoc = {
+        $set:{
+          status:updatebooking.status
+        }
+      }
+    })
+
     // 
     app.post('/services',async(req,res)=>{
          const items = req.body 
