@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5007
@@ -26,6 +27,13 @@ async function run() {
     const itemsCollection = client.db('cardocter').collection('services')
     const bookingCollection = client.db('cardocter').collection('bookings')
 
+    app.post('/jwt',async(req,res)=>{
+       const user = req.body
+       console.log(user);
+       const token = jwt.sign(user,'secret', { expiresIn: '1h' } )
+       res.send(token)
+    })
+
     app.get('/services',async(req,res)=>{
         const cursor = itemsCollection.find()
         const result = await cursor.toArray()
@@ -44,14 +52,13 @@ async function run() {
 
    app.post('/bookings',async(req,res)=>{
         const booking = req.body;
-        console.log(booking)
+      
         const result = await bookingCollection.insertOne(booking)
 
     })
 // http://localhost:5007/bookings?emails=nafisahamed14@gmail.com
     app.get('/bookings',async(req,res)=>{
-       console.log(req.query);
-       console.log(req.query.email)
+       
       
        if(req.query?.email){
          query = {email: req.query.email}
