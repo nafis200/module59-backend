@@ -35,7 +35,7 @@ const verifyToken = async(req,res,next)=>{
           return res.status(401).send({message: 'unauthorized'})
         }
         console.log('value in token',decoded);
-        
+        req.user = decoded
         next()
     })
    
@@ -96,6 +96,7 @@ async function run() {
 // http://localhost:5007/bookings?emails=nafisahamed14@gmail.com
     app.get('/bookings', logger, verifyToken, async(req,res)=>{
        console.log('tok tok token',req.cookies.token);
+       console.log('from valid token',req.user);
        if(req.query?.email){
          query = {email: req.query.email}
        }
