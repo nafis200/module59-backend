@@ -3,6 +3,7 @@ const app = express()
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const cookieParser = require('cookie-parser')
 
 const port = process.env.PORT || 5007
 const cors = require('cors');
@@ -13,6 +14,7 @@ app.use(cors({
    credentials: true
 }))
 app.use(express.json())
+app.use(cookieParser())
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS }@cluster0.f8w8siu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -68,14 +70,14 @@ async function run() {
     })
 // http://localhost:5007/bookings?emails=nafisahamed14@gmail.com
     app.get('/bookings',async(req,res)=>{
-       
-      
+       console.log('tok tok token',req.cookies.token);
        if(req.query?.email){
          query = {email: req.query.email}
        }
        const result = await bookingCollection.find().toArray()
        res.send(result)
     })
+    
 
 
     app.delete('/bookings/:id',async(req,res)=>{
