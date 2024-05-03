@@ -31,10 +31,9 @@ const verifyToken = async(req,res,next)=>{
     }
     jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,decoded)=>{
         if(err){
-          console.log(err);
-          return res.status(401).send({message: 'unauthorized'})
+          return res.status(401).send({message: 'unauthorized access'})
         }
-        console.log('value in token',decoded);
+        
         req.user = decoded
         next()
     })
@@ -95,8 +94,12 @@ async function run() {
     })
 // http://localhost:5007/bookings?emails=nafisahamed14@gmail.com
     app.get('/bookings', logger, verifyToken, async(req,res)=>{
-       console.log('tok tok token',req.cookies.token);
-       console.log('from valid token',req.user);
+      
+       if(req.query.email !== req.user.email){
+         return res.status(403).send({message: 'forbidden access'})
+       }
+
+       let query = {}
        if(req.query?.email){
          query = {email: req.query.email}
        }
