@@ -3,11 +3,15 @@ const app = express()
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+
 const port = process.env.PORT || 5007
 const cors = require('cors');
 const { title } = require('process');
 const { read } = require('fs');
-app.use(cors())
+app.use(cors({
+   origin:['http://localhost:5173'],
+   credentials: true
+}))
 app.use(express.json())
 
 
@@ -35,8 +39,7 @@ async function run() {
        res
        .cookie('token',token,{
         httpOnly: true,
-        secure: false,
-        sameSite: 'none'
+        secure: false
      })
        .send({success: true})
     })
