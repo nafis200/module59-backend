@@ -16,6 +16,31 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
+// mycreate middleware
+
+const logger = async(req,res,next)=>{
+     console.log('called',req.host,req.originalUrl)
+     next()
+}
+
+const verifyToken = async(req,res,next)=>{
+    const token = req.cookies?.token
+    console.log('value of token in middleware',token);
+    if(!token){
+      return res.status(401).send({message:'not authorized'})
+    }
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,decoded)=>{
+        if(err){
+          console.log(err);
+          return res.status(401).send({message: 'unauthorized'})
+        }
+        console.log('value in token',decoded);
+        
+        next()
+    })
+   
+}
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS }@cluster0.f8w8siu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -33,7 +58,7 @@ async function run() {
     const itemsCollection = client.db('cardocter').collection('services')
     const bookingCollection = client.db('cardocter').collection('bookings')
 
-    app.post('/jwt',async(req,res)=>{
+    app.post('/jwt',logger, async(req,res)=>{
        const user = req.body
        console.log(user);
        const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' } )
@@ -46,7 +71,7 @@ async function run() {
        .send({success: true})
     })
 
-    app.get('/services',async(req,res)=>{
+    app.get('/services',logger, async(req,res)=>{
         const cursor = itemsCollection.find()
         const result = await cursor.toArray()
         res.send(result)
@@ -69,7 +94,7 @@ async function run() {
 
     })
 // http://localhost:5007/bookings?emails=nafisahamed14@gmail.com
-    app.get('/bookings',async(req,res)=>{
+    app.get('/bookings', logger, verifyToken, async(req,res)=>{
        console.log('tok tok token',req.cookies.token);
        if(req.query?.email){
          query = {email: req.query.email}
