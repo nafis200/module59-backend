@@ -95,7 +95,9 @@ async function run() {
 // http://localhost:5007/bookings?emails=nafisahamed14@gmail.com
     app.get('/bookings', logger, verifyToken, async(req,res)=>{
       
-       if(req.query.email !== req.user.email){
+       console.log(req.query.emails, "query mail");
+       console.log(req.user.email,"user mail");
+       if(req.query.emails !== req.user.email){
          return res.status(403).send({message: 'forbidden access'})
        }
 
@@ -114,7 +116,7 @@ async function run() {
       const query = {_id : new ObjectId(id)}
       const result = await bookingCollection.deleteOne(query)
       res.send(result)
-      console.log('id is delete');
+     
     })
 
     app.patch('/bookings/:id',async(req,res)=>{
@@ -135,7 +137,6 @@ async function run() {
     // 
     app.post('/services',async(req,res)=>{
          const items = req.body 
-         console.log(items,'result');
          const result = await itemsCollection.insertOne(items)
          res.send(result)
     })
