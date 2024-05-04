@@ -94,10 +94,11 @@ async function run() {
     })
 // http://localhost:5007/bookings?emails=nafisahamed14@gmail.com
     app.get('/bookings', logger, verifyToken, async(req,res)=>{
-      
-       console.log(req.query.emails, "query mail");
+
+       console.log('token',req.cookies.token)
+       console.log(req.query.email, "query mail");
        console.log(req.user.email,"user mail");
-       if(req.query.emails !== req.user.email){
+       if(req.query.email !== req.user.email){
          return res.status(403).send({message: 'forbidden access'})
        }
 
