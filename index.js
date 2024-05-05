@@ -24,7 +24,7 @@ const logger = async(req,res,next)=>{
 }
 
 const verifyToken = async(req,res,next)=>{
-    const token = req.cookies?.token
+    const token = req?.cookies?.token
     console.log('value of token in middleware',token);
     if(!token){
       return res.status(401).send({message: 'not authorized'})
@@ -103,9 +103,7 @@ async function run() {
 // http://localhost:5007/bookings?emails=nafisahamed14@gmail.com
     app.get('/bookings', logger, verifyToken, async(req,res)=>{
 
-       console.log('token',req.cookies.token)
-       console.log(req.query.email, "query mail");
-       console.log(req.user.email,"user mail");
+       console.log('token owner info',req.user);
        if(req.query.email !== req.user.email){
          return res.status(403).send({message: 'forbidden access'})
        }
