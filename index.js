@@ -10,7 +10,7 @@ const cors = require('cors');
 const { title } = require('process');
 const { read } = require('fs');
 app.use(cors({
-   origin:['http://localhost:5173'],
+   origin: ['http://localhost:5173'],
    credentials: true
 }))
 app.use(express.json())
@@ -27,7 +27,7 @@ const verifyToken = async(req,res,next)=>{
     const token = req.cookies?.token
     console.log('value of token in middleware',token);
     if(!token){
-      return res.status(401).send({message:'not authorized'})
+      return res.status(401).send({message: 'not authorized'})
     }
     jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,decoded)=>{
         if(err){
@@ -59,15 +59,23 @@ async function run() {
 
     app.post('/jwt',logger, async(req,res)=>{
        const user = req.body
-       console.log(user);
+       console.log('jwt user',user);
        const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' } )
 
        res
        .cookie('token',token,{
         httpOnly: true,
-        secure: false
+        secure: true,
+        sameSite: 'none'
      })
        .send({success: true})
+      // res.send({token})
+    })
+
+    app.post('/logout', async(req,res)=>{
+         const user = req.body;
+         console.log(user,"logout")
+         res.clearCookie('token',{maxAge:0}).send({success: true})
     })
 
     app.get('/services',logger, async(req,res)=>{
